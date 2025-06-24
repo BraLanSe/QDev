@@ -15,28 +15,14 @@
       display: flex;
       color: #d3d3f4;
       user-select: none;
-    }
-
-    .app-container {
-      /* On enlève le display flex sur 2 colonnes */
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      box-shadow:
-        inset 0 0 20px 5px #6a0dad80,
-        0 0 50px 15px #5a2aeb80;
-      border-radius: 20px;
-      overflow: hidden;
-      /* ici on centre juste la chat-container */
-      justify-content: center;
+      justify-content: center; /* centrer le chat seul */
       align-items: center;
-      padding: 20px;
     }
 
-    /* === Chat container === */
+    /* On garde la classe chat-container et son style intacte */
     .chat-container {
-      width: 100%;
-      max-width: 700px;
+      width: 600px;
+      height: 90vh;
       display: flex;
       flex-direction: column;
       background: #0f0f25;
@@ -44,7 +30,6 @@
       box-shadow: inset 0 0 20px 3px #5a2aeb;
       overflow: hidden;
       position: relative;
-      height: 90vh;
     }
 
     /* === Header chat === */
@@ -62,7 +47,7 @@
       user-select: none;
     }
 
-    /* Bouton Accueil */
+    /* Bouton Accueil comme lien */
     #btnHome {
       background: transparent;
       border: 2px solid #d3d3f4;
@@ -74,6 +59,9 @@
       transition: background-color 0.3s, color 0.3s;
       user-select: none;
       font-size: 14px;
+      text-decoration: none; /* lien sans soulignement */
+      display: inline-block;
+      text-align: center;
     }
 
     #btnHome:hover {
@@ -226,50 +214,86 @@
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <section class="chat-container">
-      <header class="chat-header">
-        <button id="btnHome" title="Retour à la page contacts">Accueil</button>
-        <div id="chatWithName">Bienvenue</div>
-      </header>
+  <div class="chat-container">
+    <header class="chat-header">
+      <!-- Le bouton devient un lien vers la page contacts existante -->
+      <a href="/contact.html" id="btnHome" title="Retour aux contacts">Contacts</a>
+      <div id="chatWithName">Chat</div>
+    </header>
 
-      <div class="chat-box" id="chatBox">
-        <p style="text-align:center; padding:20px; color:#bbb;">
-          Sélectionne un contact depuis ta page Contacts pour commencer à discuter.
-        </p>
-      </div>
+    <div class="chat-box" id="chatBox"></div>
 
-      <div class="chat-input">
-        <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
-        <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" disabled />
-        <button id="sendBtn" disabled>Envoyer</button>
-        <emoji-picker style="display:none;"></emoji-picker>
-      </div>
-    </section>
+    <div class="chat-input">
+      <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
+      <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" />
+      <button id="sendBtn">Envoyer</button>
+      <emoji-picker style="display:none;"></emoji-picker>
+    </div>
   </div>
 
   <script type="module">
     import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
 
+    // Données contact unique dans cette page, tu peux changer l'id si tu veux
+    const currentChatId = 'ContactUnique'; 
+
+    // Messages pour ce contact (exemple)
+    const messages = {
+      ContactUnique: [
+        { sender: 'other', text: "Salut ! Comment tu vas ?" },
+      ],
+    };
+
+    // Elements DOM
     const chatBox = document.getElementById('chatBox');
     const chatWithName = document.getElementById('chatWithName');
-    const btnHome = document.getElementById('btnHome');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
     const emojiPicker = document.querySelector('emoji-picker');
     const toggleEmoji = document.getElementById('toggleEmoji');
 
-    // Le bouton Accueil redirige vers la page Contacts existante
-    btnHome.addEventListener('click', () => {
-      window.location.href = '/contacts.html'; // <-- Mets ici le chemin vers ta page contacts
+    // Affiche tous les messages
+    function renderMessages() {
+      chatBox.innerHTML = '';
+      const msgs = messages[currentChatId] || [];
+      msgs.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = 'message ' + (msg.sender === 'user' ? 'user' : 'other');
+        div.innerText = msg.text;
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Envoie un message
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+      if (!messages[currentChatId]) messages[currentChatId] = [];
+      messages[currentChatId].push({ sender: 'user', text });
+      renderMessages();
+      messageInput.value = '';
+      emojiPicker.style.display = 'none';
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
     });
 
-    // Comme on n'a pas le chat avec un contact sélectionné ici,
-    // on désactive l'input et le bouton envoyer.
+    toggleEmoji.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
 
-    // Tu peux garder les fonctionnalités d'emoji si tu veux,
-    // ou les désactiver aussi si tu préfères.
+    emojiPicker.addEventListener('emoji-click', event => {
+      messageInput.value += event.detail.unicode;
+      messageInput.focus();
+    });
 
+    // Initialisation
+    chatWithName.textContent = "ContactUnique";
+    renderMessages();
   </script>
 </body>
 </html>
