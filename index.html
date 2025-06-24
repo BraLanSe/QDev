@@ -64,7 +64,8 @@
       flex-direction: column;
       gap: 8px;
       transition: box-shadow 0.3s;
-      cursor: default;
+      cursor: pointer;
+      user-select: none;
     }
 
     .contact-card:hover {
@@ -99,32 +100,6 @@
       user-select: none;
     }
 
-    /* Bouton retour (comme sur la page chat) */
-    #btnBack {
-      align-self: center;
-      background: transparent;
-      border: 2px solid #d3d3f4;
-      border-radius: 12px;
-      color: #d3d3f4;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 8px 20px;
-      transition: background-color 0.3s, color 0.3s;
-      user-select: none;
-      font-size: 16px;
-      margin-bottom: 10px;
-      width: 140px;
-      text-align: center;
-      box-shadow: 0 0 10px #7f5fff88;
-    }
-
-    #btnBack:hover {
-      background-color: #c3bfff;
-      color: #2a1e6d;
-      border-color: #a18fff;
-      box-shadow: 0 0 20px #a18fff;
-    }
-
     /* Responsive */
     @media (max-width: 600px) {
       .contact-card {
@@ -141,11 +116,10 @@
 </head>
 <body>
   <div class="container">
-    <button id="btnBack">← Retour au Chat</button>
     <h1>Liste des Contacts</h1>
 
     <!-- Exemple de contacts -->
-    <div class="contact-card">
+    <div class="contact-card" data-contact="Alice Dupont">
       <div class="contact-name">Alice Dupont</div>
       <div class="contact-info">
         <div><span class="icon">📧</span> alice.dupont@email.com</div>
@@ -154,7 +128,7 @@
       </div>
     </div>
 
-    <div class="contact-card">
+    <div class="contact-card" data-contact="Bob Martin">
       <div class="contact-name">Bob Martin</div>
       <div class="contact-info">
         <div><span class="icon">📧</span> bob.martin@email.com</div>
@@ -163,7 +137,7 @@
       </div>
     </div>
 
-    <div class="contact-card">
+    <div class="contact-card" data-contact="Charlie Lambert">
       <div class="contact-name">Charlie Lambert</div>
       <div class="contact-info">
         <div><span class="icon">📧</span> charlie.l@example.com</div>
@@ -172,7 +146,7 @@
       </div>
     </div>
 
-    <div class="contact-card">
+    <div class="contact-card" data-contact="Diana Moreau">
       <div class="contact-name">Diana Moreau</div>
       <div class="contact-info">
         <div><span class="icon">📧</span> diana.moreau@email.com</div>
@@ -184,11 +158,15 @@
   </div>
 
   <script>
-    // Ici tu peux gérer la navigation retour vers la page chat (par exemple)
-    document.getElementById('btnBack').addEventListener('click', () => {
-      // Simple exemple: revenir à la page chat (changer l'URL selon ton projet)
-      window.location.href = 'chat.html'; 
-      // Ou si tu utilises SPA, tu peux émettre un événement ou changer la vue
+    // Quand on clique sur un contact, on redirige vers chat.html avec le nom du contact en paramètre
+    document.querySelectorAll('.contact-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const contactName = card.getAttribute('data-contact');
+        // Encode le nom pour URL (gestion espaces et caractères spéciaux)
+        const encodedName = encodeURIComponent(contactName);
+        // Redirection avec paramètre contact
+        window.location.href = `chat.html?contact=${encodedName}`;
+      });
     });
   </script>
 </body>
