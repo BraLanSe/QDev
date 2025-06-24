@@ -120,51 +120,44 @@
 
     <!-- Exemple de contacts -->
     <div class="contact-card" data-contact="Alice Dupont">
-      <div class="contact-name">Alice Dupont</div>
+      <div class="contact-name">Allan</div>
       <div class="contact-info">
-        <div><span class="icon">📧</span> alice.dupont@email.com</div>
+        <div><span class="icon">📧</span> mail@email.com</div>
         <div><span class="icon">📞</span> +33 6 12 34 56 78</div>
-        <div><span class="icon">🌐</span> alice-portfolio.com</div>
       </div>
     </div>
 
     <div class="contact-card" data-contact="Bob Martin">
-      <div class="contact-name">Bob Martin</div>
+      <div class="contact-name">Bradley</div>
       <div class="contact-info">
-        <div><span class="icon">📧</span> bob.martin@email.com</div>
+        <div><span class="icon">📧</span> mail@email.com</div>
         <div><span class="icon">📞</span> +33 6 98 76 54 32</div>
-        <div><span class="icon">🏢</span> Société XYZ</div>
       </div>
     </div>
 
     <div class="contact-card" data-contact="Charlie Lambert">
-      <div class="contact-name">Charlie Lambert</div>
+      <div class="contact-name">Mouhammed</div>
       <div class="contact-info">
-        <div><span class="icon">📧</span> charlie.l@example.com</div>
+        <div><span class="icon">📧</span> mail@email.com</div>
         <div><span class="icon">📞</span> +33 7 11 22 33 44</div>
-        <div><span class="icon">🌍</span> Paris, France</div>
       </div>
     </div>
 
     <div class="contact-card" data-contact="Diana Moreau">
-      <div class="contact-name">Diana Moreau</div>
+      <div class="contact-name">Karanba</div>
       <div class="contact-info">
-        <div><span class="icon">📧</span> diana.moreau@email.com</div>
+        <div><span class="icon">📧</span> mail@email.com</div>
         <div><span class="icon">📞</span> +33 6 44 55 66 77</div>
-        <div><span class="icon">💼</span> Freelance Dev</div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // Quand on clique sur un contact, on redirige vers chat.html avec le nom du contact en paramètre
     document.querySelectorAll('.contact-card').forEach(card => {
       card.addEventListener('click', () => {
         const contactName = card.getAttribute('data-contact');
-        // Encode le nom pour URL (gestion espaces et caractères spéciaux)
         const encodedName = encodeURIComponent(contactName);
-        // Redirection avec paramètre contact
         window.location.href = `chat.html?contact=${encodedName}`;
       });
     });
