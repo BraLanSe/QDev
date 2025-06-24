@@ -3,13 +3,161 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Messagerie</title>
-  <link rel="stylesheet" href="style.css"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.min.css">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.min.js"></script>
+  <title>Chat - Messagerie</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker-element/1.6.2/emoji-picker-element.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fafafa;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 95%;
+      max-width: 900px;
+      height: 90vh;
+      display: flex;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .contacts {
+      width: 250px;
+      background-color: #fff;
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .contacts h3 {
+      margin: 0;
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      font-size: 18px;
+    }
+
+    .contacts ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .contacts li {
+      padding: 15px;
+      cursor: pointer;
+      transition: background 0.3s;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .contacts li:hover,
+    .contacts li.active {
+      background-color: #f0f0f0;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background-color: #dcf8c6;
+      border-bottom-right-radius: 0;
+    }
+
+    .message.other {
+      align-self: flex-start;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-bottom-left-radius: 0;
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+      gap: 10px;
+      position: relative;
+    }
+
+    .chat-input input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-input button {
+      padding: 8px 16px;
+      background-color: #3897f0;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .chat-input button:hover {
+      background-color: #1877f2;
+    }
+
+    emoji-picker {
+      position: absolute;
+      bottom: 60px;
+      left: 10px;
+      z-index: 100;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <div class="messagerie-app">
+  <div class="app">
     <div class="contacts">
       <h3>Contacts</h3>
       <ul id="contactList">
@@ -19,22 +167,79 @@
       </ul>
     </div>
 
-    <div class="chat-section">
-      <div class="chat-header" id="chatHeader">
-        <h2 id="chatWith">Sélectionnez un contact</h2>
-      </div>
-
+    <div class="chat-container">
+      <div class="chat-header" id="chatHeader">Sélectionnez un contact</div>
       <div class="chat-box" id="chatBox"></div>
 
       <div class="chat-input">
-        <input type="text" id="messageInput" placeholder="Écris un message..."/>
-        <emoji-picker id="emojiPicker" style="display:none; position:absolute; bottom:60px; right:20px;"></emoji-picker>
-        <button id="emojiBtn">😊</button>
+        <emoji-picker id="emojiPicker"></emoji-picker>
+        <button id="toggleEmoji">😃</button>
+        <input type="text" id="messageInput" placeholder="Message..." />
         <button onclick="sendMessage()">Envoyer</button>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+
+    const input = document.getElementById('messageInput');
+    const chatBox = document.getElementById('chatBox');
+    const chatHeader = document.getElementById('chatHeader');
+    const emojiPicker = document.getElementById('emojiPicker');
+    const toggleEmoji = document.getElementById('toggleEmoji');
+    const contactList = document.querySelectorAll('#contactList li');
+
+    let currentContact = null;
+    const messages = {};
+
+    function selectContact(name) {
+      currentContact = name;
+      chatHeader.textContent = `Chat avec ${name}`;
+
+      contactList.forEach(li => li.classList.remove('active'));
+      document.querySelector(`#contactList li[onclick*="${name}"]`).classList.add('active');
+
+      renderMessages();
+    }
+
+    function renderMessages() {
+      chatBox.innerHTML = '';
+      if (!messages[currentContact]) return;
+
+      messages[currentContact].forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `message ${msg.sender}`;
+        div.innerText = msg.text;
+        chatBox.appendChild(div);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const message = input.value.trim();
+      if (!message || !currentContact) return;
+
+      if (!messages[currentContact]) messages[currentContact] = [];
+      messages[currentContact].push({ sender: 'user', text: message });
+
+      input.value = '';
+      emojiPicker.style.display = 'none';
+      renderMessages();
+    }
+
+    input.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    toggleEmoji.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+
+    emojiPicker.addEventListener('emoji-click', event => {
+      input.value += event.detail.unicode;
+    });
+  </script>
 </body>
 </html>
