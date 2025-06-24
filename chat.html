@@ -216,7 +216,6 @@
 <body>
   <div class="chat-container">
     <header class="chat-header">
-      <!-- Le bouton devient un lien vers la page contacts existante -->
       <a href="/index.html" id="btnHome" title="Retour aux contacts">Contacts</a>
       <div id="chatWithName">Chat</div>
     </header>
@@ -232,10 +231,7 @@
   </div>
 
   <script type="module">
-    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
-
-
- 
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js'; 
 
     // Elements DOM
     const chatBox = document.getElementById('chatBox');
@@ -284,8 +280,6 @@
       messageInput.focus();
     });
 
-    // Initialisation
-    chatWithName.textContent = "ContactUnique";
     renderMessages();
   </script>
 </body>
