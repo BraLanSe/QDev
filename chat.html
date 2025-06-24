@@ -121,7 +121,7 @@
 <body>
   <div class="chat-container">
     <header class="chat-header">
-      <button id="btnHome" title="Retour à la liste des contacts" onclick="location.href='contact.html'">Accueil</button>
+      <button id="btnHome" title="Retour à la liste des contacts" onclick="location.href='contacts.html'">Accueil</button>
       <div id="chatWithName">Sélectionnez un contact</div>
     </header>
 
@@ -138,11 +138,18 @@
   </div>
 
   <script>
+    // Exemple de contacts et messages (à remplacer par ta vraie data)
     const contacts = [
-      { id: 1, name: "Allan" },
-      { id: 2, name: "Bradley" },
-      { id: 3, name: "Mouhammed" }
+      { id: 1, name: "Alice" },
+      { id: 2, name: "Bob" },
+      { id: 3, name: "Charlie" }
     ];
+
+    const messages = {
+      1: [{ sender: 'other', text: 'Salut !' }],
+      2: [{ sender: 'other', text: 'Bonjour Bob ici.' }],
+      3: [{ sender: 'other', text: 'Hello Charlie!' }]
+    };
 
     // Variables
     let currentChatId = null;
@@ -201,7 +208,8 @@
       messageInput.focus();
     });
 
-
+    // Exemple : Simuler la sélection d'un contact (tu devras intégrer ta logique)
+    // Ici on simule que l'on a sélectionné Alice au chargement
     window.onload = () => {
       currentChatId = 1;
       renderMessages();
@@ -209,6 +217,7 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+  <!-- Ou bien la balise emoji-picker si tu utilises cette web component -->
   <script src="https://unpkg.com/emoji-picker-element" type="module"></script>
 </body>
 </html>
