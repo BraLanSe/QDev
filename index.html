@@ -17,7 +17,7 @@
     </div>
 
     <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Écris un message..."/>
+      <input type="text" id="messageInput" placeholder="Écris un message... 😄💬" />
       <button onclick="sendMessage()">Envoyer</button>
     </div>
   </div>
@@ -30,25 +30,13 @@
 
       const chatBox = document.getElementById('chatBox');
 
-      // Message de l'utilisateur
       const userMessage = document.createElement('div');
       userMessage.className = 'message user';
-      userMessage.textContent = message;
+      userMessage.innerHTML = message; // permet d'afficher les emojis ou balises HTML simples
       chatBox.appendChild(userMessage);
 
       input.value = '';
-
-      // Scroll en bas
       chatBox.scrollTop = chatBox.scrollHeight;
-
-      // Réponse automatique simulée
-      setTimeout(() => {
-        const botMessage = document.createElement('div');
-        botMessage.className = 'message other';
-        botMessage.textContent = "Message reçu : " + message;
-        chatBox.appendChild(botMessage);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }, 800);
     }
 
     // Envoyer avec la touche Entrée
