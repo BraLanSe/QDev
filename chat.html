@@ -5,185 +5,162 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chat Messagerie</title>
   <style>
-    /* Reset et style de base */
-    body, html {
-      margin: 0; padding: 0; height: 100%;
+    /* Ton CSS existant pour le chat (exemple simplifié) */
+    body {
+      margin: 0; 
       font-family: Arial, sans-serif;
-      background: #1e1e2f;
+      background-color: #121214;
       color: #b9b9ff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .app-container {
-      width: 100%;
-      max-width: 500px;
-      height: 90vh;
-      background: #2a2a48;
-      border-radius: 10px;
       display: flex;
       flex-direction: column;
+      height: 100vh;
     }
-    /* Header chat */
-    header.chat-header {
-      background: #383864;
-      padding: 15px 20px;
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .chat-header {
       display: flex;
       align-items: center;
-      gap: 20px;
-      color: #b9b9ff;
-    }
-    #btnHome {
-      background: #444477;
-      border: none;
-      border-radius: 5px;
-      color: #b9b9ff;
-      font-weight: bold;
-      padding: 8px 15px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    #btnHome:hover {
-      background: #6363a8;
-    }
-    #chatWithName {
+      background-color: #2d2d44;
+      padding: 10px 15px;
       font-size: 1.2em;
       font-weight: bold;
+      gap: 15px;
+      color: #b9b9ff;
+    }
+
+    #btnHome {
+      background-color: transparent;
+      border: 1px solid #b9b9ff;
+      border-radius: 4px;
+      color: #b9b9ff;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    #btnHome:hover {
+      background-color: #b9b9ff;
+      color: #121214;
+    }
+
+    #chatWithName {
       flex-grow: 1;
     }
 
-    /* Chat box */
-    #chatBox {
+    .chat-box {
       flex-grow: 1;
-      padding: 15px 20px;
       overflow-y: auto;
-      background: #1e1e2f;
-      border-bottom: 2px solid #383864;
+      padding: 10px;
+      background-color: #1f1f32;
     }
+
     .message {
-      margin-bottom: 12px;
-      max-width: 70%;
+      margin-bottom: 10px;
       padding: 8px 12px;
-      border-radius: 12px;
+      border-radius: 10px;
+      max-width: 70%;
       word-wrap: break-word;
     }
+
     .message.user {
-      background: #5757ff;
-      color: white;
-      margin-left: auto;
-      text-align: right;
-    }
-    .message.other {
-      background: #444477;
-      color: #d1d1ff;
-      margin-right: auto;
-      text-align: left;
+      background-color: #b9b9ff;
+      color: #121214;
+      align-self: flex-end;
     }
 
-    /* Input area */
+    .message.other {
+      background-color: #444466;
+      color: #b9b9ff;
+      align-self: flex-start;
+    }
+
     .chat-input {
       display: flex;
       align-items: center;
       padding: 10px 15px;
-      background: #383864;
-      gap: 8px;
+      background-color: #2d2d44;
+      gap: 10px;
     }
+
     #messageInput {
       flex-grow: 1;
+      padding: 8px 12px;
+      border-radius: 4px;
       border: none;
-      border-radius: 20px;
-      padding: 10px 15px;
       font-size: 1em;
-      outline: none;
-      background: #2a2a48;
-      color: #b9b9ff;
-    }
-    #sendBtn, #toggleEmoji {
-      border: none;
-      background: #5757ff;
-      color: white;
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    #sendBtn:hover, #toggleEmoji:hover {
-      background: #7b7bff;
     }
 
-    /* Emoji picker */
+    #sendBtn, #toggleEmoji {
+      background-color: #b9b9ff;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #121214;
+    }
+
+    #sendBtn:hover, #toggleEmoji:hover {
+      background-color: #9a9ae8;
+    }
+
     emoji-picker {
       position: absolute;
-      bottom: 70px;
-      right: 20px;
-      background: #2a2a48;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #444477aa;
-      display: none;
+      bottom: 60px;
+      right: 15px;
       z-index: 10;
+      background-color: #2d2d44;
+      border-radius: 10px;
     }
-
   </style>
 </head>
 <body>
-  <div class="app-container">
+  <div class="chat-container">
     <header class="chat-header">
-      <button id="btnHome" title="Retour à la liste des contacts">Accueil</button>
+      <button id="btnHome" title="Retour à la liste des contacts" onclick="location.href='contact.html'">Accueil</button>
       <div id="chatWithName">Sélectionnez un contact</div>
     </header>
 
-    <div id="chatBox"></div>
+    <div class="chat-box" id="chatBox">
+      <!-- Messages s'afficheront ici -->
+    </div>
 
     <div class="chat-input">
       <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Écris un message..."
-        autocomplete="off"
-        disabled
-      />
-      <button id="sendBtn" disabled>➤</button>
-      <emoji-picker></emoji-picker>
+      <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" />
+      <button id="sendBtn">Envoyer</button>
+      <emoji-picker style="display:none;"></emoji-picker>
     </div>
   </div>
 
   <script>
-    // Simulation d'une liste de contacts - à remplacer par ta source réelle
     const contacts = [
-      { id: 1, name: "Alice" },
-      { id: 2, name: "Bob" },
-      { id: 3, name: "Charlie" }
+      { id: 1, name: "Allan" },
+      { id: 2, name: "Bradley" },
+      { id: 3, name: "Mouhammed" }
     ];
 
-    // Simulation des messages par contact id
-    const messages = {
-      1: [
-        { sender: 'other', text: "Salut, comment ça va ?" },
-        { sender: 'user', text: "Ça va bien, merci !" }
-      ],
-      2: [
-        { sender: 'other', text: "Tu as vu le match hier ?" }
-      ],
-      3: []
-    };
-
+    // Variables
+    let currentChatId = null;
     const chatWithName = document.getElementById('chatWithName');
     const chatBox = document.getElementById('chatBox');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
-    const btnHome = document.getElementById('btnHome');
     const emojiPicker = document.querySelector('emoji-picker');
     const toggleEmoji = document.getElementById('toggleEmoji');
 
-    let currentChatId = null;
-
-    // Fonction pour afficher les messages
+    // Fonction pour afficher messages
     function renderMessages() {
       chatBox.innerHTML = '';
-      if (!currentChatId) return;
+      if (!currentChatId) {
+        chatWithName.textContent = "Sélectionnez un contact";
+        return;
+      }
+      chatWithName.textContent = contacts.find(c => c.id === currentChatId)?.name || 'Inconnu';
       const msgs = messages[currentChatId] || [];
       msgs.forEach(msg => {
         const div = document.createElement('div');
@@ -194,21 +171,10 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Ouvre un chat donné, affiche nom et messages, active input
-    function openChat(id) {
-      currentChatId = id;
-      const contact = contacts.find(c => c.id === id);
-      chatWithName.textContent = contact ? contact.name : "Inconnu";
-      renderMessages();
-      messageInput.disabled = false;
-      sendBtn.disabled = false;
-      messageInput.focus();
-    }
-
-    // Envoie message
+    // Envoyer un message
     function sendMessage() {
       if (!currentChatId) {
-        alert("Sélectionnez un contact pour envoyer un message.");
+        alert("Sélectionne un contact avant d'envoyer un message !");
         return;
       }
       const text = messageInput.value.trim();
@@ -220,42 +186,29 @@
       emojiPicker.style.display = 'none';
     }
 
-    // Toggle emoji picker
-    toggleEmoji.addEventListener('click', () => {
-      if (emojiPicker.style.display === 'none') {
-        emojiPicker.style.display = 'block';
-      } else {
-        emojiPicker.style.display = 'none';
-      }
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
     });
 
-    // Insère emoji dans l'input
+    // Emoji picker toggle
+    toggleEmoji.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+
     emojiPicker.addEventListener('emoji-click', event => {
       messageInput.value += event.detail.unicode;
       messageInput.focus();
     });
 
-    // Envoi avec bouton
-    sendBtn.addEventListener('click', sendMessage);
 
-    // Envoi avec touche Enter
-    messageInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') sendMessage();
-    });
-
-    // Bouton Accueil renvoie vers ta page contacts existante
-    btnHome.addEventListener('click', () => {
-      window.location.href = '/contacts.html'; // Modifie ce lien par l'URL réelle de ta page contacts
-    });
-
-    // Au chargement, on demande à l’utilisateur de sélectionner un contact (tu peux modifier comme tu veux)
-    // Par exemple, ouvrir le chat du premier contact automatiquement :
-    openChat(contacts[0].id);
-
+    window.onload = () => {
+      currentChatId = 1;
+      renderMessages();
+    };
   </script>
 
-  <!-- Librairie emoji-picker -->
-  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js"></script>
-  <emoji-picker></emoji-picker>
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
+  <script src="https://unpkg.com/emoji-picker-element" type="module"></script>
 </body>
 </html>
