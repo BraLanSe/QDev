@@ -4,43 +4,150 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chat - Messagerie</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker-element/1.6.2/emoji-picker-element.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fafafa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 420px;
+      height: 90vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px 14px;
+      border-radius: 20px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background-color: #dcf8c6;
+      border-bottom-right-radius: 0;
+    }
+
+    .message.other {
+      align-self: flex-start;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-bottom-left-radius: 0;
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: #fff;
+      gap: 10px;
+    }
+
+    .chat-input input[type="text"] {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .chat-input button {
+      padding: 8px 16px;
+      background-color: #3897f0;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .chat-input button:hover {
+      background-color: #1877f2;
+    }
+  </style>
 </head>
 <body>
   <div class="chat-container">
-    <div class="chat-header">
-      <h2>Messagerie</h2>
-    </div>
+    <div class="chat-header">Messagerie</div>
 
-    <div class="chat-box" id="chatBox">
-      <!-- Les messages seront ajoutés ici dynamiquement -->
-    </div>
+    <div class="chat-box" id="chatBox"></div>
 
     <div class="chat-input">
-      <input type="text" id="messageInput" placeholder="Écris un message... 😄💬" />
+      <emoji-picker style="position: absolute; bottom: 70px; left: 10px; display: none;"></emoji-picker>
+      <button id="toggleEmoji">😃</button>
+      <input type="text" id="messageInput" placeholder="Message..." />
       <button onclick="sendMessage()">Envoyer</button>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+
+    const input = document.getElementById('messageInput');
+    const chatBox = document.getElementById('chatBox');
+    const emojiPicker = document.querySelector('emoji-picker');
+    const toggleEmoji = document.getElementById('toggleEmoji');
+
+    toggleEmoji.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+
+    emojiPicker.addEventListener('emoji-click', event => {
+      input.value += event.detail.unicode;
+    });
+
     function sendMessage() {
-      const input = document.getElementById('messageInput');
       const message = input.value.trim();
       if (!message) return;
 
-      const chatBox = document.getElementById('chatBox');
-
       const userMessage = document.createElement('div');
       userMessage.className = 'message user';
-      userMessage.innerHTML = message; // permet d'afficher les emojis ou balises HTML simples
+      userMessage.innerText = message;
       chatBox.appendChild(userMessage);
 
       input.value = '';
+      emojiPicker.style.display = 'none';
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Envoyer avec la touche Entrée
-    document.getElementById('messageInput').addEventListener("keypress", function(e) {
+    input.addEventListener("keypress", function(e) {
       if (e.key === "Enter") {
         sendMessage();
       }
