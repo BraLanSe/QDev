@@ -1,187 +1,182 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chat Messagerie</title>
   <style>
-    /* Ton CSS existant pour le chat (exemple simplifié) */
-    body {
-      margin: 0; 
-      font-family: Arial, sans-serif;
-      background-color: #121214;
-      color: #b9b9ff;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
+    /* Ton CSS chat existant, inchangé */
     .chat-container {
       display: flex;
       flex-direction: column;
       height: 100vh;
+      width: 100%;
+      background: #2f3136;
+      color: #b9b9ff;
+      font-family: Arial, sans-serif;
     }
 
     .chat-header {
       display: flex;
       align-items: center;
-      background-color: #2d2d44;
-      padding: 10px 15px;
-      font-size: 1.2em;
+      background-color: #202225;
+      padding: 10px;
+      font-size: 20px;
       font-weight: bold;
-      gap: 15px;
       color: #b9b9ff;
     }
 
-    #btnHome {
-      background-color: transparent;
-      border: 1px solid #b9b9ff;
-      border-radius: 4px;
+    .chat-header button {
+      margin-right: 15px;
+      background: none;
+      border: none;
       color: #b9b9ff;
-      padding: 5px 10px;
+      font-size: 18px;
       cursor: pointer;
-      font-weight: normal;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
     }
-    #btnHome:hover {
-      background-color: #b9b9ff;
-      color: #121214;
+
+    .chat-header button:hover {
+      background-color: #40444b;
     }
 
     #chatWithName {
       flex-grow: 1;
+      text-align: center;
     }
 
     .chat-box {
       flex-grow: 1;
+      padding: 20px;
       overflow-y: auto;
-      padding: 10px;
-      background-color: #1f1f32;
+      background: #36393f;
     }
 
     .message {
+      padding: 10px;
       margin-bottom: 10px;
-      padding: 8px 12px;
       border-radius: 10px;
-      max-width: 70%;
+      max-width: 60%;
       word-wrap: break-word;
     }
 
     .message.user {
-      background-color: #b9b9ff;
-      color: #121214;
+      background-color: #7289da;
+      color: white;
       align-self: flex-end;
+      margin-left: auto;
     }
 
     .message.other {
-      background-color: #444466;
-      color: #b9b9ff;
+      background-color: #40444b;
+      color: white;
       align-self: flex-start;
+      margin-right: auto;
     }
 
     .chat-input {
       display: flex;
-      align-items: center;
-      padding: 10px 15px;
-      background-color: #2d2d44;
-      gap: 10px;
+      padding: 10px;
+      background-color: #202225;
     }
 
-    #messageInput {
+    .chat-input input[type="text"] {
       flex-grow: 1;
-      padding: 8px 12px;
-      border-radius: 4px;
+      padding: 10px;
       border: none;
-      font-size: 1em;
+      border-radius: 5px;
+      font-size: 16px;
+      background-color: #40444b;
+      color: #b9b9ff;
     }
 
-    #sendBtn, #toggleEmoji {
-      background-color: #b9b9ff;
+    .chat-input button {
+      margin-left: 10px;
+      background-color: #7289da;
       border: none;
-      border-radius: 4px;
-      padding: 8px 12px;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
       cursor: pointer;
-      font-weight: bold;
-      color: #121214;
+      font-size: 16px;
     }
 
-    #sendBtn:hover, #toggleEmoji:hover {
-      background-color: #9a9ae8;
-    }
-
-    emoji-picker {
-      position: absolute;
-      bottom: 60px;
-      right: 15px;
-      z-index: 10;
-      background-color: #2d2d44;
-      border-radius: 10px;
+    .chat-input button:hover {
+      background-color: #5b6eae;
     }
   </style>
 </head>
+
 <body>
   <div class="chat-container">
     <header class="chat-header">
-      <button id="btnHome" title="Retour à la liste des contacts" onclick="location.href='contacts.html'">Accueil</button>
+      <!-- Le bouton Accueil renvoie vers la page contacts existante -->
+      <button id="btnHome" title="Retour à la liste des contacts" onclick="window.location.href='contacts.html'">Accueil</button>
+
+      <!-- Le nom du contact sélectionné sera injecté ici -->
       <div id="chatWithName">Sélectionnez un contact</div>
     </header>
 
     <div class="chat-box" id="chatBox">
-      <!-- Messages s'afficheront ici -->
+      <!-- Messages du chat insérés ici -->
     </div>
 
     <div class="chat-input">
-      <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
       <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" />
       <button id="sendBtn">Envoyer</button>
-      <emoji-picker style="display:none;"></emoji-picker>
     </div>
   </div>
 
   <script>
-    // Exemple de contacts et messages (à remplacer par ta vraie data)
+    // Exemple de contacts
     const contacts = [
-      { id: 1, name: "Alice" },
-      { id: 2, name: "Bob" },
-      { id: 3, name: "Charlie" }
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+      { id: 3, name: 'Charlie' }
     ];
 
+    // Exemple de messages stockés par contact id
     const messages = {
-      1: [{ sender: 'other', text: 'Salut !' }],
-      2: [{ sender: 'other', text: 'Bonjour Bob ici.' }],
-      3: [{ sender: 'other', text: 'Hello Charlie!' }]
+      1: [{ sender: 'other', text: 'Salut, comment ça va ?' }],
+      2: [{ sender: 'other', text: 'Bonjour !' }],
+      3: [{ sender: 'other', text: 'Yo !' }]
     };
 
-    // Variables
-    let currentChatId = null;
+    // On récupère l'id du contact en paramètre GET (exemple: chat.html?contact=2)
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentChatId = urlParams.get('contact');
+
     const chatWithName = document.getElementById('chatWithName');
     const chatBox = document.getElementById('chatBox');
     const messageInput = document.getElementById('messageInput');
     const sendBtn = document.getElementById('sendBtn');
-    const emojiPicker = document.querySelector('emoji-picker');
-    const toggleEmoji = document.getElementById('toggleEmoji');
 
-    // Fonction pour afficher messages
     function renderMessages() {
       chatBox.innerHTML = '';
       if (!currentChatId) {
-        chatWithName.textContent = "Sélectionnez un contact";
+        chatWithName.textContent = 'Sélectionnez un contact';
         return;
       }
-      chatWithName.textContent = contacts.find(c => c.id === currentChatId)?.name || 'Inconnu';
+      const contact = contacts.find(c => c.id == currentChatId);
+      chatWithName.textContent = contact ? contact.name : 'Inconnu';
+
       const msgs = messages[currentChatId] || [];
       msgs.forEach(msg => {
         const div = document.createElement('div');
         div.className = 'message ' + (msg.sender === 'user' ? 'user' : 'other');
-        div.textContent = msg.text;
+        div.innerText = msg.text;
         chatBox.appendChild(div);
       });
+
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Envoyer un message
     function sendMessage() {
       if (!currentChatId) {
-        alert("Sélectionne un contact avant d'envoyer un message !");
+        alert("Veuillez sélectionner un contact avant d'envoyer un message.");
         return;
       }
       const text = messageInput.value.trim();
@@ -190,7 +185,6 @@
       messages[currentChatId].push({ sender: 'user', text });
       renderMessages();
       messageInput.value = '';
-      emojiPicker.style.display = 'none';
     }
 
     sendBtn.addEventListener('click', sendMessage);
@@ -198,26 +192,8 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    // Emoji picker toggle
-    toggleEmoji.addEventListener('click', () => {
-      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
-    });
-
-    emojiPicker.addEventListener('emoji-click', event => {
-      messageInput.value += event.detail.unicode;
-      messageInput.focus();
-    });
-
-    // Exemple : Simuler la sélection d'un contact (tu devras intégrer ta logique)
-    // Ici on simule que l'on a sélectionné Alice au chargement
-    window.onload = () => {
-      currentChatId = 1;
-      renderMessages();
-    };
+    renderMessages();
   </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/index.min.js"></script>
-  <!-- Ou bien la balise emoji-picker si tu utilises cette web component -->
-  <script src="https://unpkg.com/emoji-picker-element" type="module"></script>
 </body>
+
 </html>
