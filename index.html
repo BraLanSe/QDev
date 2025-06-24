@@ -6,70 +6,43 @@
   <title>Chat - Messagerie</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker-element/1.6.2/emoji-picker-element.min.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #fafafa;
       height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
-    .app {
-      width: 95%;
-      max-width: 900px;
-      height: 90vh;
-      display: flex;
-      background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-
-    .contacts {
+    .contact-list {
       width: 250px;
-      background-color: #fff;
+      background: #fff;
       border-right: 1px solid #ddd;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .contacts h3 {
-      margin: 0;
-      padding: 15px;
-      border-bottom: 1px solid #ddd;
-      font-size: 18px;
-    }
-
-    .contacts ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
+      padding: 20px;
+      box-sizing: border-box;
       overflow-y: auto;
-      flex: 1;
     }
 
-    .contacts li {
-      padding: 15px;
+    .contact {
+      padding: 12px;
+      border-radius: 10px;
       cursor: pointer;
+      margin-bottom: 10px;
       transition: background 0.3s;
-      border-bottom: 1px solid #f0f0f0;
     }
 
-    .contacts li:hover,
-    .contacts li.active {
-      background-color: #f0f0f0;
+    .contact:hover {
+      background-color: #f2f2f2;
     }
 
     .chat-container {
       flex: 1;
       display: flex;
       flex-direction: column;
+      background: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      height: 100vh;
     }
 
     .chat-header {
@@ -150,33 +123,29 @@
     emoji-picker {
       position: absolute;
       bottom: 60px;
-      left: 10px;
-      z-index: 100;
-      display: none;
+      left: 20px;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="contacts">
-      <h3>Contacts</h3>
-      <ul id="contactList">
-        <li onclick="selectContact('Alice')">Alice</li>
-        <li onclick="selectContact('Bob')">Bob</li>
-        <li onclick="selectContact('Charlie')">Charlie</li>
-      </ul>
-    </div>
+  <div class="contact-list">
+    <h3>Contacts</h3>
+    <div class="contact" onclick="selectContact('Alice')">Alice</div>
+    <div class="contact" onclick="selectContact('Bob')">Bob</div>
+    <div class="contact" onclick="selectContact('Charlie')">Charlie</div>
+  </div>
 
-    <div class="chat-container">
-      <div class="chat-header" id="chatHeader">Sélectionnez un contact</div>
-      <div class="chat-box" id="chatBox"></div>
+  <div class="chat-container">
+    <div class="chat-header" id="chatHeader">Sélectionnez un contact</div>
 
-      <div class="chat-input">
-        <emoji-picker id="emojiPicker"></emoji-picker>
-        <button id="toggleEmoji">😃</button>
-        <input type="text" id="messageInput" placeholder="Message..." />
-        <button onclick="sendMessage()">Envoyer</button>
-      </div>
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="chat-input">
+      <emoji-picker id="emojiPicker" style="display: none;"></emoji-picker>
+      <button id="toggleEmoji">😃</button>
+      <input type="text" id="messageInput" placeholder="Message..." />
+      <button onclick="sendMessage()">Envoyer</button>
     </div>
   </div>
 
@@ -185,33 +154,37 @@
 
     const input = document.getElementById('messageInput');
     const chatBox = document.getElementById('chatBox');
-    const chatHeader = document.getElementById('chatHeader');
     const emojiPicker = document.getElementById('emojiPicker');
     const toggleEmoji = document.getElementById('toggleEmoji');
-    const contactList = document.querySelectorAll('#contactList li');
+    const chatHeader = document.getElementById('chatHeader');
 
     let currentContact = null;
-    const messages = {};
+    const messageStore = {}; // Historique des messages par contact
+
+    toggleEmoji.addEventListener('click', () => {
+      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
+    });
+
+    emojiPicker.addEventListener('emoji-click', event => {
+      input.value += event.detail.unicode;
+    });
 
     function selectContact(name) {
       currentContact = name;
       chatHeader.textContent = `Chat avec ${name}`;
-
-      contactList.forEach(li => li.classList.remove('active'));
-      document.querySelector(`#contactList li[onclick*="${name}"]`).classList.add('active');
-
-      renderMessages();
+      emojiPicker.style.display = 'none';
+      loadMessages(name);
     }
 
-    function renderMessages() {
+    function loadMessages(name) {
       chatBox.innerHTML = '';
-      if (!messages[currentContact]) return;
+      const messages = messageStore[name] || [];
 
-      messages[currentContact].forEach(msg => {
-        const div = document.createElement('div');
-        div.className = `message ${msg.sender}`;
-        div.innerText = msg.text;
-        chatBox.appendChild(div);
+      messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${msg.sender}`;
+        msgDiv.innerText = msg.text;
+        chatBox.appendChild(msgDiv);
       });
 
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -221,24 +194,26 @@
       const message = input.value.trim();
       if (!message || !currentContact) return;
 
-      if (!messages[currentContact]) messages[currentContact] = [];
-      messages[currentContact].push({ sender: 'user', text: message });
+      const userMessage = document.createElement('div');
+      userMessage.className = 'message user';
+      userMessage.innerText = message;
+      chatBox.appendChild(userMessage);
+
+      if (!messageStore[currentContact]) {
+        messageStore[currentContact] = [];
+      }
+
+      messageStore[currentContact].push({ sender: 'user', text: message });
 
       input.value = '';
       emojiPicker.style.display = 'none';
-      renderMessages();
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    input.addEventListener("keypress", e => {
-      if (e.key === "Enter") sendMessage();
-    });
-
-    toggleEmoji.addEventListener('click', () => {
-      emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
-    });
-
-    emojiPicker.addEventListener('emoji-click', event => {
-      input.value += event.detail.unicode;
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
     });
   </script>
 </body>
