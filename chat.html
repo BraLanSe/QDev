@@ -234,15 +234,9 @@
   <script type="module">
     import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
 
-    // Données contact unique dans cette page, tu peux changer l'id si tu veux
     const currentChatId = 'ContactUnique'; 
 
-    // Messages pour ce contact (exemple)
-    const messages = {
-      ContactUnique: [
-        { sender: 'other', text: "Salut ! Comment tu vas ?" },
-      ],
-    };
+   
 
     // Elements DOM
     const chatBox = document.getElementById('chatBox');
@@ -285,6 +279,11 @@
     toggleEmoji.addEventListener('click', () => {
       emojiPicker.style.display = emojiPicker.style.display === 'none' ? 'block' : 'none';
     });
+
+    btnHome.addEventListener('click', () => {
+  window.location.href = 'contact.html';
+});
+
 
     emojiPicker.addEventListener('emoji-click', event => {
       messageInput.value += event.detail.unicode;
