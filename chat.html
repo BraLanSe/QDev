@@ -3,280 +3,296 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chat - Messagerie Galactique</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emoji-picker-element/1.6.2/emoji-picker-element.min.css" />
+  <title>Chat - Liste des contacts</title>
   <style>
-    /* === Reset et Body === */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: radial-gradient(circle at center, #0b0c1b, #130f40, #1b1464);
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    body, html {
       height: 100vh;
+      background-color: #2a2a40;
+      color: #b9b9ff;
       display: flex;
-      color: #d3d3f4;
-      user-select: none;
-      justify-content: center; /* Centrer le chat */
+      justify-content: center;
       align-items: center;
     }
-
     .app-container {
+      width: 360px;
+      height: 600px;
+      background-color: #1b1b32;
+      border-radius: 10px;
       display: flex;
-      width: 600px; /* largeur fixe pour le chat */
-      height: 90vh;
-      box-shadow:
-        inset 0 0 20px 5px #6a0dad80,
-        0 0 50px 15px #5a2aeb80;
-      border-radius: 20px;
-      overflow: hidden;
       flex-direction: column;
-      background: #0f0f25;
-      box-shadow: inset 0 0 20px 3px #5a2aeb;
+      overflow: hidden;
+      box-shadow: 0 0 15px #5c5cffaa;
     }
 
-    /* === Chat container === */
-    .chat-container {
+    /* Contacts page */
+    #contactsPage {
+      padding: 10px 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+    #contactsPage h3 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: 600;
+      font-size: 24px;
+      color: #b9b9ff;
+    }
+    #contactsUl {
+      list-style: none;
+      padding: 0 20px;
+    }
+    #contactsUl li {
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background: #3a3a6a;
+      transition: background-color 0.2s;
+    }
+    #contactsUl li:hover {
+      background-color: #5656a8;
+    }
+
+    /* Chat page */
+    #chatPage {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: transparent;
-      overflow: hidden;
-      position: relative;
-      width: 100%;
+      background-color: #1b1b32;
     }
-
-    /* === Header chat === */
     .chat-header {
-      background: linear-gradient(90deg, #5a2aeb, #8c3eff);
-      color: #d3d3f4;
-      padding: 15px 20px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
+      background-color: #3a3a6a;
+      padding: 10px 15px;
+      gap: 10px;
+      user-select: none;
+      font-weight: 600;
       font-size: 20px;
-      text-shadow: 0 0 10px #c9b8ff;
-      box-shadow: 0 2px 10px #4b22d1;
-      user-select: none;
-      border-radius: 20px 20px 0 0;
     }
-
-    /* Bouton Accueil */
-    #btnHome {
-      background: transparent;
-      border: 2px solid #d3d3f4;
-      border-radius: 12px;
-      color: #d3d3f4;
-      font-weight: 700;
+    .chat-header button {
+      background: #5c5cff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: white;
       cursor: pointer;
-      padding: 6px 12px;
-      transition: background-color 0.3s, color 0.3s;
-      user-select: none;
       font-size: 14px;
+      user-select: none;
+      transition: background-color 0.3s ease;
     }
-
-    #btnHome:hover {
-      background-color: #c3bfff;
-      color: #2a1e6d;
-      border-color: #a18fff;
-      box-shadow: 0 0 10px #a18fff;
+    .chat-header button:hover {
+      background-color: #3f3fff;
     }
-
-    /* === Zone des messages === */
+    #chatWithName {
+      flex-grow: 1;
+      text-align: center;
+      color: #e0e0ff;
+    }
+    
     .chat-box {
       flex: 1;
-      padding: 20px;
+      padding: 15px;
       overflow-y: auto;
-      background: linear-gradient(135deg, #1c1f3c 0%, #3b3c72 100%);
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      scrollbar-width: thin;
-      scrollbar-color: #7f5fff #1c1f3c;
-      border-radius: 0 0 20px 20px;
+      gap: 8px;
+      background-color: #292958;
+      font-size: 16px;
     }
-
-    .chat-box::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .chat-box::-webkit-scrollbar-thumb {
-      background-color: #7f5fff;
-      border-radius: 10px;
-    }
-
-    /* === Messages === */
     .message {
-      max-width: 65%;
-      padding: 14px 18px;
-      border-radius: 20px;
-      font-size: 15px;
-      line-height: 1.4;
+      max-width: 70%;
+      padding: 8px 12px;
+      border-radius: 12px;
       word-wrap: break-word;
-      box-shadow: 0 0 8px #9c85ff55;
-      user-select: text;
-      transition: box-shadow 0.3s;
-      white-space: pre-wrap;
     }
-
     .message.user {
+      background-color: #5c5cff;
       align-self: flex-end;
-      background: #9c85ff;
-      color: #1c1f3c;
-      border-bottom-right-radius: 0;
-      box-shadow: 0 0 15px #c3bfff;
+      color: white;
     }
-
-    .message.user:hover {
-      box-shadow: 0 0 25px #d4c3ff;
-    }
-
     .message.other {
+      background-color: #4949a9;
       align-self: flex-start;
-      background: #282b5c;
-      color: #d3d3f4;
-      border-bottom-left-radius: 0;
-      box-shadow: 0 0 15px #6e57ff;
+      color: white;
     }
 
-    .message.other:hover {
-      box-shadow: 0 0 25px #9c85ff;
-    }
-
-    /* === Zone d'envoi === */
     .chat-input {
+      padding: 10px 12px;
       display: flex;
-      align-items: center;
-      padding: 12px 20px;
-      border-top: 1px solid #4a2ea6;
-      background: linear-gradient(90deg, #5a2aeb, #8c3eff);
-      gap: 10px;
-      position: relative;
-      border-radius: 0 0 20px 20px;
+      gap: 8px;
+      background-color: #3a3a6a;
     }
-
-    .chat-input input[type="text"] {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: 25px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-      user-select: text;
-      background: #fff;
-      color: #1c1f3c;
-      box-shadow: inset 0 0 5px #5a2aebaa;
-      transition: box-shadow 0.3s;
-    }
-
-    .chat-input input[type="text"]:focus {
-      box-shadow: inset 0 0 10px #a18fff;
-    }
-
     .chat-input button {
-      background-color: #3b27a3;
+      background: #5c5cff;
       border: none;
-      border-radius: 25px;
-      padding: 12px 18px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: white;
       cursor: pointer;
-      color: #d3d3f4;
-      font-weight: 700;
-      font-size: 16px;
-      transition: background-color 0.3s, box-shadow 0.3s;
+      font-size: 18px;
       user-select: none;
+      transition: background-color 0.3s ease;
     }
-
     .chat-input button:hover {
-      background-color: #7f5fff;
-      box-shadow: 0 0 15px #c3bfff;
+      background-color: #3f3fff;
+    }
+    .chat-input input {
+      flex-grow: 1;
+      border-radius: 6px;
+      border: none;
+      padding: 8px 12px;
+      font-size: 16px;
+    }
+    .chat-input input:focus {
+      outline: none;
     }
 
-    /* Emoji picker style override */
     emoji-picker {
       position: absolute;
       bottom: 60px;
-      left: 20px;
-      z-index: 1000;
-      box-shadow: 0 0 20px #7f5fffaa;
-      border-radius: 15px;
-      background: #2a267d;
-      --emoji-picker-background-color: #2a267d;
-      --emoji-picker-category-button-hover-background: #7f5fff;
-      --emoji-picker-category-button-active-background: #c3bfff;
-      --emoji-picker-group-label-color: #d3d3f4;
-      --emoji-picker-scrollbar-thumb-background-color: #7f5fff;
-      --emoji-picker-scrollbar-track-background-color: #1c1f3c;
-      --emoji-picker-selected-emoji-background-color: #c3bfff;
-    }
-
-    #toggleEmoji {
-      background: transparent;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #d3d3f4;
-      user-select: none;
-      padding: 0 6px;
-      transition: color 0.3s;
-    }
-
-    #toggleEmoji:hover {
-      color: #c3bfff;
-      text-shadow: 0 0 8px #c3bfff;
+      right: 20px;
+      z-index: 10;
+      box-shadow: 0 0 10px #4444ccaa;
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <section class="chat-container">
-      <header class="chat-header">
-        <button id="btnHome" title="Retour à la page contacts">Contacts</button>
-        <div id="chatWithName">Bienvenue</div>
-      </header>
 
-      <div class="chat-box" id="chatBox">
-        <p style="text-align:center; padding:20px; color:#bbb;">
-          Sélectionne un contact depuis la page Contacts pour commencer à discuter.
-        </p>
-      </div>
+<div class="app-container">
 
-      <div class="chat-input">
-        <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
-        <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" disabled />
-        <button id="sendBtn" disabled>Envoyer</button>
-        <emoji-picker style="display:none;"></emoji-picker>
-      </div>
-    </section>
-  </div>
+  <!-- Page liste contacts -->
+  <section id="contactsPage" style="display: none;">
+    <h3>Contacts</h3>
+    <ul id="contactsUl"></ul>
+  </section>
 
-  <script type="module">
-    import 'https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js';
+  <!-- Page chat -->
+  <section id="chatPage" style="display: none; flex-direction: column;">
+    <header class="chat-header">
+      <button id="btnHome" title="Retour à la liste des contacts">Accueil</button>
+      <div id="chatWithName">Bienvenue</div>
+    </header>
 
- 
-    const btnHome = document.getElementById('btnHome');
-    btnHome.addEventListener('click', () => {
-      window.location.href = 'contacts.html';
+    <div class="chat-box" id="chatBox"></div>
+
+    <div class="chat-input">
+      <button id="toggleEmoji" title="Ouvrir le sélecteur d'émojis">😃</button>
+      <input type="text" id="messageInput" placeholder="Écris un message..." autocomplete="off" />
+      <button id="sendBtn">Envoyer</button>
+      <emoji-picker style="display:none;"></emoji-picker>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Contacts
+  const contacts = [
+    { id: 1, name: "Allan" },
+    { id: 2, name: "Badley" },
+    { id: 3, name: "Mouhammed" }
+  ];
+
+
+  const contactsPage = document.getElementById('contactsPage');
+  const chatPage = document.getElementById('chatPage');
+  const contactsUl = document.getElementById('contactsUl');
+  const chatBox = document.getElementById('chatBox');
+  const chatWithName = document.getElementById('chatWithName');
+  const btnHome = document.getElementById('btnHome');
+  const messageInput = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const emojiPicker = document.querySelector('emoji-picker');
+  const toggleEmoji = document.getElementById('toggleEmoji');
+
+  let currentChatId = null;
+
+  function renderContacts() {
+    contactsUl.innerHTML = '';
+    contacts.forEach(c => {
+      const li = document.createElement('li');
+      li.textContent = c.name;
+      li.dataset.id = c.id;
+      li.addEventListener('click', () => openChat(c.id));
+      contactsUl.appendChild(li);
     });
+  }
 
-  
+  function openChat(id) {
+    currentChatId = id;
+    chatWithName.textContent = contacts.find(c => c.id === id)?.name || 'Inconnu';
+    renderMessages();
+    contactsPage.style.display = 'none';
+    chatPage.style.display = 'flex';
+  }
 
-    // Gestion du picker d'émojis sans chat actif
-    const emojiPicker = document.querySelector('emoji-picker');
-    const toggleEmoji = document.getElementById('toggleEmoji');
-    const messageInput = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-
-    toggleEmoji.addEventListener('click', () => {
-      if (emojiPicker.style.display === 'none') {
-        emojiPicker.style.display = 'block';
-      } else {
-        emojiPicker.style.display = 'none';
-      }
+  function renderMessages() {
+    chatBox.innerHTML = '';
+    if (!currentChatId) return;
+    const msgs = messages[currentChatId] || [];
+    msgs.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = 'message ' + (msg.sender === 'user' ? 'user' : 'other');
+      div.textContent = msg.text;
+      chatBox.appendChild(div);
     });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-    emojiPicker.addEventListener('emoji-click', event => {
-      messageInput.value += event.detail.unicode;
-      messageInput.focus();
-    });
-  </script>
+  function sendMessage() {
+    if (!currentChatId) {
+      alert("Choisis un contact avant d'envoyer un message !");
+      return;
+    }
+    const text = messageInput.value.trim();
+    if (!text) return;
+    if (!messages[currentChatId]) messages[currentChatId] = [];
+    messages[currentChatId].push({ sender: 'user', text });
+    renderMessages();
+    messageInput.value = '';
+    emojiPicker.style.display = 'none';
+  }
+
+  btnHome.addEventListener('click', () => {
+    currentChatId = null;
+    chatWithName.textContent = 'Bienvenue';
+    chatBox.innerHTML = '';
+    contactsPage.style.display = 'block';
+    chatPage.style.display = 'none';
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+  messageInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  toggleEmoji.addEventListener('click', () => {
+    if (emojiPicker.style.display === 'none') {
+      emojiPicker.style.display = 'block';
+    } else {
+      emojiPicker.style.display = 'none';
+    }
+  });
+
+  emojiPicker.addEventListener('emoji-click', event => {
+    messageInput.value += event.detail.unicode;
+    messageInput.focus();
+  });
+
+  // Démarrage : afficher liste contacts
+  renderContacts();
+  contactsPage.style.display = 'block';
+  chatPage.style.display = 'none';
+</script>
+
+<!-- Librairie emoji-picker (Web Component) -->
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.2/dist/emoji-button.min.js"></script>
 </body>
 </html>
