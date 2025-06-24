@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat - Messagerie</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Messagerie</h2>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+      <!-- Les messages seront ajoutés ici dynamiquement -->
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="Écris un message..."/>
+      <button onclick="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatBox = document.getElementById('chatBox');
+
+      // Message de l'utilisateur
+      const userMessage = document.createElement('div');
+      userMessage.className = 'message user';
+      userMessage.textContent = message;
+      chatBox.appendChild(userMessage);
+
+      input.value = '';
+
+      // Scroll en bas
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Réponse automatique simulée
+      setTimeout(() => {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'message other';
+        botMessage.textContent = "Message reçu : " + message;
+        chatBox.appendChild(botMessage);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 800);
+    }
+
+    // Envoyer avec la touche Entrée
+    document.getElementById('messageInput').addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
